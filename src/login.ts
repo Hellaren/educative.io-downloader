@@ -56,7 +56,7 @@ export async function login(): Promise<void> {
   // await page.setUserAgent(USER_AGENT);
   await page.goto(EDUCATIVE_BASE_URL, { timeout: HTTP_REQUEST_TIMEOUT, waitUntil: 'networkidle2' });
 
-  const isLoginButtonClicked = await clickButton(page, 'MuiButton-label', 'Log in');
+  const isLoginButtonClicked = await clickButton(page, 'text-default', 'Log in');
 
   if (!isLoginButtonClicked) {
     throw new Error('Could not find login button (open login form)');
@@ -68,13 +68,14 @@ export async function login(): Promise<void> {
   await page.type('[name=email]', EMAIL, { delay: 200 });
   await page.type('[name=password]', PASSWORD, { delay: 200 });
 
-  const clickLoginBtn = await clickButton(page, 'MuiButton-label', 'Login');
+  const clickLoginBtn = await clickButton(page, 'contained-primary', 'Log In');
 
   if (!clickLoginBtn) {
     throw new Error('Could not find login button (login form submit)');
   }
 
-  const element = await page.waitForSelector(".b-status-control span", { timeout: 10000 });
+  // TODO  Figure out what's wrong with the selector
+  const element = await page.waitForSelector("h3.selenium-welcome-back-text", { timeout: 10000 });
   let label = await page.evaluate((el: HTMLSpanElement) => el.innerText, element);
 
   if (label === 'Logging in...') {
